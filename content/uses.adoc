@@ -1,0 +1,19 @@
++++
+title = "Uses"
+layout = "single"
++++
+
+== Hardware
+
+- Laptop: https://frame.work[Framework 13]
+- Phone: Google Pixel 9a
+
+== Nixos 
+
+All my computer run NixOS, https://github.com/wjehee/.garland[my configuration] shows all the tools and configurations I use in more detail.
+In addition, I use https://github.com/danth/stylix[Stylix] for theming my setup.
+
+=== Development
+
+Blabla
+

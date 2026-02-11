@@ -1,3 +1,58 @@
-<nav>
+<nav class="sticky top-0 z-50 backdrop-blur-md bg-stone-50/80 dark:bg-zinc-950/80 border-b border-stone-200 dark:border-zinc-800">
+    <div class="container mx-auto px-6 flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+            <a href="{{ "/" | relURL }}" class="text-xl font-bold tracking-tight text-stone-900 dark:text-zinc-100 hover:text-stone-600 dark:hover:text-zinc-400 transition-colors">
+                {{ .Site.Title }}
+            </a>
+            <span class="hidden md:inline text-stone-400 dark:text-zinc-600">&mdash;</span>
+            <span id="nav-quote" class="hidden md:inline text-sm text-stone-500 dark:text-zinc-400 italic cursor-pointer hover:text-stone-700 dark:hover:text-zinc-200" style="transition: opacity 0.3s ease;"></span>
+        </div>
+        <script>
+            (function() {
+                const quotes = {{ site.Data.quotes | jsonify | safeJS }};
+                const el = document.getElementById("nav-quote");
+                let current = sessionStorage.getItem("nav-quote");
+                if (!current || !quotes.includes(current)) {
+                    current = quotes[Math.floor(Math.random() * quotes.length)];
+                    sessionStorage.setItem("nav-quote", current);
+                }
+                el.textContent = current;
+                el.addEventListener("click", function() {
+                    const others = quotes.filter(q => q !== current);
+                    current = others[Math.floor(Math.random() * others.length)];
+                    sessionStorage.setItem("nav-quote", current);
+                    el.style.opacity = "0";
+                    el.addEventListener("transitionend", function swap() {
+                        el.removeEventListener("transitionend", swap);
+                        el.textContent = current;
+                        el.style.opacity = "1";
+                    });
+                });
+            })();
+        </script>
 
+        <div class="flex items-center gap-8">
+            {{ $currentPage := . }}
+            {{ $links := slice
+                (dict "url" "/posts/" "label" "Blog")
+                (dict "url" "/portfolio/" "label" "Portfolio")
+                (dict "url" "/uses/" "label" "Uses")
+            }}
+            {{ range $links }}
+                <a href="{{ .url | relURL }}"
+                   class="text-base font-medium transition-colors {{ if hasPrefix $currentPage.RelPermalink .url }}nav-active{{ else }}text-stone-500 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-zinc-100{{ end }}">
+                    {{ .label }}
+                </a>
+            {{ end }}
+
+            <button id="theme-toggle" class="p-2 rounded-full bg-stone-200 dark:bg-zinc-800 text-stone-800 dark:text-zinc-200 hover:bg-stone-300 dark:hover:bg-zinc-700 transition-colors duration-300" aria-label="Toggle theme">
+                <svg id="icon-sun" class="w-5 h-5 hidden dark:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                </svg>
+                <svg id="icon-moon" class="w-5 h-5 block dark:hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                </svg>
+            </button>
+        </div>
+    </div>
 </nav>

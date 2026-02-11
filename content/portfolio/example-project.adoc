@@ -1,0 +1,17 @@
++++
+title = "Example Project"
+date = 2025-07-09T00:00:00+02:00
+draft = false
++++
+
+A placeholder project entry. Replace this with a real project description.
+
+== Overview
+
+This is an example portfolio entry to demonstrate the layout.
+
+== Technologies
+
+* Go
+* Nix
+* Hugo

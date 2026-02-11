@@ -1,0 +1,18 @@
+{{ define "main" }}
+
+<article class="container mx-auto px-6 py-16">
+    <header class="mb-12">
+        <h1 class="mb-4">{{ .Title }}</h1>
+        {{ with .Date }}
+            <time class="text-sm text-stone-500 dark:text-zinc-500" datetime="{{ .Format "2006-01-02" }}">
+                {{ .Format "January 2, 2006" }}
+            </time>
+        {{ end }}
+    </header>
+
+    <div class="prose dark:prose-invert max-w-none">
+        {{ .Content }}
+    </div>
+</article>
+
+{{ end }}
