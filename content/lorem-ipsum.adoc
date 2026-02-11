@@ -1,0 +1,247 @@
++++
+title = "Lorem Ipsum"
+layout = "single"
+_build.list = "never"
+_build.publishResources = true
+_build.render = "always"
++++
+
+*What is this page?* +
+This page is for me to test all the different styling on the site. +
+It was inspired by https://vale.rocks/posts/lorem-ipsum[This post] by https://vale.rocks/[Declan Chidlow] and has been very useful so far.
+
+== Inline Formatting
+
+This paragraph has *bold text*, _italic text_, and `monospace text`.
+You can also combine them: *_bold italic_* and `*bold monospace*`.
+Here is some #highlighted text# using a custom role, and some [.line-through]#strikethrough text#.
+
+Superscript: E = mc^2^ and subscript: H~2~O are also supported.
+
+Use keyboard shortcuts like kbd:[Ctrl+Shift+P] or kbd:[Alt+F4] to do things.
+Press the btn:[OK] button when you are done.
+
+This sentence has a footnote.footnote:[Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is the footnote content.]
+
+== Links and Cross-References
+
+Visit https://example.com[Example Website] for more information.
+You can also write bare URLs: https://example.com.
+Or mailto links: mailto:lorem@example.com[send an email].
+
+See <<_tables>> for table examples, or jump to <<_code_blocks>>.
+
+== Lists
+
+=== Unordered List
+
+* Lorem ipsum dolor sit amet
+* Consectetur adipiscing elit
+** Nested item alpha
+** Nested item beta
+*** Deeply nested item
+* Sed do eiusmod tempor incididunt
+
+=== Ordered List
+
+. First, prepare the environment
+. Then, configure the settings
+.. Sub-step alpha
+.. Sub-step beta
+. Finally, deploy the application
+. Verify everything works
+
+=== Checklist
+
+* [x] Task one completed
+* [x] Task two completed
+* [ ] Task three still pending
+* [ ] Task four still pending
+
+=== Description List
+
+Term One:: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Term Two:: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Term Three:: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+== Admonitions
+
+NOTE: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+TIP: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+WARNING: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+CAUTION: Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+IMPORTANT: Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+
+[NOTE]
+====
+This is a *compound admonition* with multiple paragraphs.
+
+It can contain lists:
+
+* Item one
+* Item two
+
+And even `inline code`.
+====
+
+== Code Blocks
+
+Inline code: `println!("Hello, world!")` is how you print in Rust.
+
+.A simple Rust function
+[source,rust]
+----
+fn fibonacci(n: u64) -> u64 {
+    match n {
+        0 => 0,
+        1 => 1,
+        _ => fibonacci(n - 1) + fibonacci(n - 2),
+    }
+}
+----
+
+.Nix flake configuration
+[source,nix]
+----
+{
+  description = "Lorem ipsum development environment";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs }: {
+    devShells.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
+      buildInputs = [ nixpkgs.legacyPackages.x86_64-linux.hello ];
+    };
+  };
+}
+----
+
+.Shell commands
+[source,bash]
+----
+#!/usr/bin/env bash
+for i in $(seq 1 10); do
+    echo "Iteration $i"
+done
+----
+
+.A YAML configuration
+[source,yaml]
+----
+server:
+  host: 0.0.0.0
+  port: 8080
+database:
+  url: "postgres://localhost/lorem"
+  pool_size: 5
+----
+
+A literal block preserves formatting exactly:
+
+....
+This    is    a    literal    block.
+  Indentation   is   preserved.
+    No *formatting* is applied.
+....
+
+== Blockquotes
+
+[quote, Marcus Aurelius, Meditations]
+____
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+____
+
+> Simple blockquote style.
+> Lorem ipsum dolor sit amet.
+
+[quote]
+____
+An anonymous quote without attribution.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+____
+
+== Tables
+
+.A simple table
+[cols="1,2,1"]
+|===
+| Header 1 | Header 2 | Header 3
+
+| Alpha
+| Lorem ipsum dolor sit amet
+| 42
+
+| Beta
+| Consectetur adipiscing elit
+| 17
+
+| Gamma
+| Sed do eiusmod tempor incididunt
+| 99
+|===
+
+.Table with alignment
+[cols="<1,^2,>1"]
+|===
+| Left | Center | Right
+
+| Lorem
+| Ipsum
+| 3.14
+
+| Dolor
+| Sit amet
+| 2.72
+
+| Consectetur
+| Adipiscing
+| 1.41
+|===
+
+== Sidebar and Example Blocks
+
+.A sidebar block
+****
+This is a sidebar block. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+It is typically rendered with a distinct background or border to set it apart from the main content.
+****
+
+.An example block
+====
+This is an example block. It can contain any AsciiDoc content:
+
+* Lists
+* `Code`
+* *Bold text*
+====
+
+== Horizontal Rules
+
+Content above the rule.
+
+'''
+
+Content below the rule.
+
+---
+
+More content after another rule.
+
+== Images
+
+NOTE: No actual images are included, but this is the syntax.
+
+// image::screenshot.png[A screenshot, 600, 400]
+
+== Passthrough and Special Characters
+
+Special characters: (C) (R) (TM) -- ... -> <- => <=
+
+An HTML passthrough: pass:[<mark>highlighted via passthrough</mark>]

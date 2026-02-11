@@ -24,6 +24,13 @@
         {{ end }}
     </head>
     <body class="flex flex-col min-h-screen bg-stone-50 text-stone-800 dark:bg-zinc-950 dark:text-zinc-200">
+        <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+            <filter id="ink-blot">
+                <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" seed="2" result="noise"/>
+                <feGaussianBlur in="noise" stdDeviation="1.5" result="smooth"/>
+                <feDisplacementMap in="SourceGraphic" in2="smooth" scale="12" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+        </svg>
         {{ partial "nav.html" . }}
         <main class="flex-1 fade-in">
             {{ block "main" . }} {{ end }}
@@ -48,6 +55,36 @@
                 transition.finished.then(() => {
                     delete document.documentElement.dataset.themeTransition;
                 });
+            });
+        </script>
+        <script>
+            document.querySelectorAll('a[href]').forEach(function(a) {
+                if (a.hostname && a.hostname !== location.hostname) {
+                    a.setAttribute('target', '_blank');
+                    a.setAttribute('rel', 'noopener');
+                }
+            });
+        </script>
+        <script>
+            document.querySelectorAll('.listingblock .content').forEach(function(block) {
+                var btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.setAttribute('aria-label', 'Copy code');
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+                var checkSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                var copySvg = btn.innerHTML;
+                btn.addEventListener('click', function() {
+                    var code = block.querySelector('code');
+                    navigator.clipboard.writeText(code.textContent).then(function() {
+                        btn.innerHTML = checkSvg;
+                        btn.classList.add('copied');
+                        setTimeout(function() {
+                            btn.innerHTML = copySvg;
+                            btn.classList.remove('copied');
+                        }, 1500);
+                    });
+                });
+                block.appendChild(btn);
             });
         </script>
     </body>

@@ -31,6 +31,7 @@ just build
 
 ### Content Flow
 - Content lives in `content/` as `.adoc` files with TOML front matter
+- `content/lorem-ipsum.adoc` is a styling reference page that exercises all AsciiDoc elements (lists, admonitions, code blocks, tables, etc.) — use it to verify CSS changes
 - Layouts in `layouts/` define HTML structure, with `baseof.html` as the base template
 - `layouts/home.html` is the homepage template
 - Partials in `layouts/_partials/` for reusable components

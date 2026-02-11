@@ -79,6 +79,460 @@
     .prose li {
         @apply text-lg;
     }
+
+    .prose li > p:only-child {
+        @apply mb-0;
+    }
+
+    /* Ordered lists */
+    .prose ol {
+        @apply list-decimal pl-6 mb-4 space-y-1;
+    }
+
+    .prose ol ol {
+        @apply list-[lower-alpha] mt-1;
+    }
+
+    .prose ol ol ol {
+        @apply list-[lower-roman];
+    }
+
+    /* Checklists */
+    .prose ul.checklist {
+        @apply list-none pl-4;
+    }
+
+    /* Description lists */
+    .prose .dlist dl {
+        @apply mb-4;
+    }
+
+    .prose .dlist dt {
+        @apply text-lg font-bold mt-4 first:mt-0
+            text-stone-900 dark:text-zinc-100;
+    }
+
+    .prose .dlist dd {
+        @apply ml-6 mt-1;
+    }
+
+    .prose .dlist dd > p:only-child {
+        @apply mb-0;
+    }
+
+    .prose .admonitionblock {
+        @apply my-6 rounded-lg border-l-4 overflow-hidden;
+    }
+
+    .prose .admonitionblock table {
+        @apply w-full border-collapse;
+    }
+
+    .prose .admonitionblock td {
+        @apply py-3 px-4 align-top;
+    }
+
+    .prose .admonitionblock td.icon {
+        @apply w-12 shrink-0;
+    }
+
+    .prose .admonitionblock td.icon .title {
+        font-size: 0;
+    }
+
+    .prose .admonitionblock td.icon .title::before {
+        content: "";
+        display: block;
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: currentColor;
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+    }
+
+    .prose .admonitionblock.note td.icon .title::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'/%3E%3C/svg%3E");
+    }
+
+    .prose .admonitionblock.tip td.icon .title::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z'/%3E%3C/svg%3E");
+    }
+
+    .prose .admonitionblock.warning td.icon .title::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z'/%3E%3C/svg%3E");
+    }
+
+    .prose .admonitionblock.caution td.icon .title::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z'/%3E%3C/svg%3E");
+    }
+
+    .prose .admonitionblock.important td.icon .title::before {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v8z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v8z'/%3E%3C/svg%3E");
+    }
+
+    .prose .admonitionblock td.content {
+        @apply text-base;
+    }
+
+    .prose .admonitionblock.note {
+        @apply border-blue-500 bg-blue-50 text-blue-900 dark:bg-blue-950/40 dark:text-blue-200;
+    }
+
+    .prose .admonitionblock.tip {
+        @apply border-emerald-500 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200;
+    }
+
+    .prose .admonitionblock.warning {
+        @apply border-amber-500 bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200;
+    }
+
+    .prose .admonitionblock.caution {
+        @apply border-orange-500 bg-orange-50 text-orange-900 dark:bg-orange-950/40 dark:text-orange-200;
+    }
+
+    .prose .admonitionblock.important {
+        @apply border-rose-500 bg-rose-50 text-rose-900 dark:bg-rose-950/40 dark:text-rose-200;
+    }
+
+    /* Highlighted text — ink blot effect */
+    .prose mark {
+        @apply relative text-inherit;
+        background: transparent;
+        padding: 0 3px;
+        transition: color 0.2s;
+    }
+
+    .prose mark:hover {
+        @apply text-white dark:text-white;
+    }
+
+    .prose mark::before {
+        content: "";
+        position: absolute;
+        inset: -6px -10px;
+        z-index: -1;
+        border-radius: 20% 80% 65% 35% / 55% 25% 75% 45%;
+        filter: url(#ink-blot);
+        @apply bg-red-900/30 dark:bg-red-400/20;
+        transition: background-color 0.2s;
+    }
+
+    .prose mark:hover::before {
+        @apply bg-red-900/80 dark:bg-red-500/70;
+    }
+
+    /* Inline code */
+    .prose code {
+        @apply text-sm px-1.5 py-0.5 rounded
+            bg-stone-100 text-stone-800
+            dark:bg-zinc-800 dark:text-zinc-200;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Code blocks */
+    .prose .listingblock,
+    .prose .literalblock {
+        @apply my-6;
+    }
+
+    .prose .listingblock .content {
+        @apply relative;
+    }
+
+    .prose .listingblock .copy-btn {
+        @apply absolute top-2 right-2 p-1.5 rounded-md cursor-pointer
+            text-stone-400 hover:text-stone-600 bg-stone-100/80 hover:bg-stone-200
+            dark:text-zinc-500 dark:hover:text-zinc-300 dark:bg-zinc-800/80 dark:hover:bg-zinc-700
+            opacity-0 transition-all;
+    }
+
+    .prose .listingblock:hover .copy-btn {
+        @apply opacity-100;
+    }
+
+    .prose .listingblock .copy-btn.copied {
+        @apply text-emerald-500 dark:text-emerald-400;
+    }
+
+    .prose .listingblock > .title,
+    .prose .literalblock > .title {
+        @apply text-sm italic mb-1 text-stone-500 dark:text-zinc-500;
+    }
+
+    .prose .listingblock pre,
+    .prose .literalblock pre {
+        @apply rounded-lg p-4 overflow-x-auto text-sm leading-relaxed
+            bg-stone-50 text-stone-800 border border-stone-200
+            dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .prose .listingblock pre code,
+    .prose .literalblock pre code {
+        @apply bg-transparent p-0 rounded-none text-inherit;
+    }
+
+    /* Syntax highlighting — Rouge, subtle theme */
+    /* Comments */
+    .prose .highlight .c,
+    .prose .highlight .c1,
+    .prose .highlight .cm,
+    .prose .highlight .cs,
+    .prose .highlight .ch {
+        @apply italic;
+        color: #9ca3af;
+    }
+
+    /* Keywords */
+    .prose .highlight .k,
+    .prose .highlight .kd,
+    .prose .highlight .kn,
+    .prose .highlight .kp,
+    .prose .highlight .kr,
+    .prose .highlight .kc {
+        @apply font-medium;
+        color: #78716c;
+    }
+
+    /* Keyword type (e.g. fn, let) */
+    .prose .highlight .kt {
+        color: #7089a1;
+    }
+
+    /* Strings */
+    .prose .highlight .s,
+    .prose .highlight .s1,
+    .prose .highlight .s2,
+    .prose .highlight .sb,
+    .prose .highlight .sc,
+    .prose .highlight .sh,
+    .prose .highlight .si,
+    .prose .highlight .sx,
+    .prose .highlight .sr {
+        color: #6d8c7a;
+    }
+
+    /* Numbers */
+    .prose .highlight .mi,
+    .prose .highlight .mf,
+    .prose .highlight .mh,
+    .prose .highlight .mo {
+        color: #a68a5b;
+    }
+
+    /* Name.Function */
+    .prose .highlight .nf {
+        color: #57534e;
+    }
+
+    /* Name.Builtin */
+    .prose .highlight .nb {
+        color: #7089a1;
+    }
+
+    /* Operators */
+    .prose .highlight .o,
+    .prose .highlight .ow {
+        color: #8b7e74;
+    }
+
+    /* Name.Attribute */
+    .prose .highlight .na {
+        color: #6d8c7a;
+    }
+
+    /* --- Dark mode --- */
+    .dark .prose .highlight .c,
+    .dark .prose .highlight .c1,
+    .dark .prose .highlight .cm,
+    .dark .prose .highlight .cs,
+    .dark .prose .highlight .ch {
+        color: #6b7280;
+    }
+
+    .dark .prose .highlight .k,
+    .dark .prose .highlight .kd,
+    .dark .prose .highlight .kn,
+    .dark .prose .highlight .kp,
+    .dark .prose .highlight .kr,
+    .dark .prose .highlight .kc {
+        color: #a1a1aa;
+    }
+
+    .dark .prose .highlight .kt {
+        color: #8ea4b8;
+    }
+
+    .dark .prose .highlight .s,
+    .dark .prose .highlight .s1,
+    .dark .prose .highlight .s2,
+    .dark .prose .highlight .sb,
+    .dark .prose .highlight .sc,
+    .dark .prose .highlight .sh,
+    .dark .prose .highlight .si,
+    .dark .prose .highlight .sx,
+    .dark .prose .highlight .sr {
+        color: #7daa94;
+    }
+
+    .dark .prose .highlight .mi,
+    .dark .prose .highlight .mf,
+    .dark .prose .highlight .mh,
+    .dark .prose .highlight .mo {
+        color: #c4a46c;
+    }
+
+    .dark .prose .highlight .nf {
+        color: #d4d4d8;
+    }
+
+    .dark .prose .highlight .nb {
+        color: #8ea4b8;
+    }
+
+    .dark .prose .highlight .o,
+    .dark .prose .highlight .ow {
+        color: #b0a99a;
+    }
+
+    .dark .prose .highlight .na {
+        color: #7daa94;
+    }
+
+    /* Tables */
+    .prose table.tableblock {
+        @apply my-6 w-full text-base border-collapse;
+    }
+
+    .prose table.tableblock caption {
+        @apply text-sm italic mb-2 text-stone-500 dark:text-zinc-500 caption-top text-left;
+    }
+
+    .prose table.tableblock thead th {
+        @apply px-4 py-2.5 text-left text-sm font-bold uppercase tracking-wide
+            border-b-2 border-stone-300
+            text-stone-900 bg-stone-50
+            dark:border-zinc-600 dark:text-zinc-100 dark:bg-zinc-800/50;
+    }
+
+    .prose table.tableblock tbody td {
+        @apply px-4 py-2.5 border-b border-stone-200 dark:border-zinc-700/50;
+    }
+
+    .prose table.tableblock tbody tr:last-child td {
+        @apply border-b-0;
+    }
+
+    .prose table.tableblock .halign-center {
+        @apply text-center;
+    }
+
+    .prose table.tableblock .halign-right {
+        @apply text-right;
+    }
+
+    .prose table.tableblock .tableblock {
+        @apply m-0;
+    }
+
+    /* Blockquotes */
+    .prose .quoteblock {
+        @apply my-6 pl-5 border-l-2 border-stone-300 dark:border-zinc-600
+            bg-stone-50 dark:bg-zinc-800/40
+            rounded-r-lg py-4 pr-5;
+    }
+
+    .prose .quoteblock blockquote {
+        @apply italic;
+    }
+
+    .prose .quoteblock blockquote > :last-child {
+        @apply mb-0;
+    }
+
+    .prose .quoteblock .attribution {
+        @apply mt-3 text-sm text-stone-500 dark:text-zinc-500 not-italic;
+    }
+
+    /* Sidebar block */
+    .prose .sidebarblock {
+        @apply my-6 rounded-lg p-5
+            bg-stone-100 dark:bg-zinc-800/60;
+    }
+
+    .prose .sidebarblock > .content > .title {
+        @apply text-sm font-bold uppercase tracking-wide mb-3
+            text-stone-900 dark:text-zinc-100;
+    }
+
+    .prose .sidebarblock > .content > :last-child {
+        @apply mb-0;
+    }
+
+    /* Example block */
+    .prose .exampleblock {
+        @apply my-6 rounded-lg p-5
+            border border-stone-200 dark:border-zinc-700;
+    }
+
+    .prose .exampleblock > .title {
+        @apply text-sm italic mb-3 text-stone-500 dark:text-zinc-500;
+    }
+
+    .prose .exampleblock > .content > :last-child {
+        @apply mb-0;
+    }
+
+    /* Links */
+    .prose a {
+        @apply underline decoration-stone-400 dark:decoration-zinc-500
+            underline-offset-2 decoration-1
+            transition-colors duration-200;
+    }
+
+    .prose a:hover {
+        @apply decoration-stone-800 dark:decoration-zinc-200;
+    }
+
+    /* Keyboard keys */
+    .prose kbd {
+        @apply inline-block text-xs px-1.5 py-0.5 rounded
+            font-sans font-medium
+            bg-stone-100 text-stone-700 border border-stone-300
+            shadow-[0_1px_0_1px_theme(--color-stone-300)]
+            dark:bg-zinc-700 dark:text-zinc-200 dark:border-zinc-500
+            dark:shadow-[0_1px_0_1px_theme(--color-zinc-600)];
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .prose .keyseq kbd {
+        @apply mx-0.5;
+    }
+
+    .prose .keyseq kbd:first-child {
+        @apply ml-0;
+    }
+
+    .prose .keyseq kbd:last-child {
+        @apply mr-0;
+    }
+
+    /* Button macro */
+    .prose b.button {
+        @apply inline-block text-sm px-3 py-0.5 rounded-md
+            font-sans font-medium not-italic
+            bg-stone-200 text-stone-800 border border-stone-300
+            dark:bg-zinc-700 dark:text-zinc-200 dark:border-zinc-500;
+    }
 }
 
 .fade-in {

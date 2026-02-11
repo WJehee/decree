@@ -28,3 +28,8 @@ allow = ['^(dart-)?sass(-embedded)?$', '^go$', '^git$', '^npx$', '^postcss$', '^
     source = "(postcss|tailwind)\\.config\\.js"
     target = "css"
 
+[markup.asciidocExt]
+  [markup.asciidocExt.attributes]
+    experimental = ""
+    source-highlighter = "rouge"
+
