@@ -1,0 +1,27 @@
++++
+title = "Privacy Policy"
+layout = "single"
++++
+
+This website does not use cookies, tracking scripts, or any third-party analytics.
+
+== Access Logs
+
+This site is served by https://caddyserver.com[Caddy], which collects standard access logs. These logs may include:
+
+- IP address
+- Date and time of the request
+- Requested URL and HTTP method
+- HTTP status code
+- User agent string
+- Referrer header
+
+Access logs are used solely for monitoring server health and investigating issues. They are automatically deleted after *14 days*.
+
+== Third Parties
+
+No data is shared with or sent to third parties. There are no ads, no analytics services, and no tracking pixels.
+
+== Contact
+
+If you have questions about this policy, you can reach me at contact@wouterjehee.com.

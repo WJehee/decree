@@ -1,3 +1,4 @@
 public/
 *.lock
 hugo_stats.json
+.claude/
