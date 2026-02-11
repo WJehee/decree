@@ -444,6 +444,23 @@
         @apply m-0;
     }
 
+    /* Two-column layout */
+    .prose .sidebarblock.columns {
+        @apply my-6 bg-transparent p-0 rounded-none;
+    }
+
+    .prose .sidebarblock.columns > .content {
+        @apply flex flex-col md:flex-row gap-16;
+    }
+
+    .prose .sidebarblock.columns > .content > .openblock {
+        @apply flex-1 min-w-0;
+    }
+
+    .prose .sidebarblock.columns > .content > .openblock > .content > :last-child {
+        @apply mb-0;
+    }
+
     /* Blockquotes */
     .prose .quoteblock {
         @apply my-6 pl-5 border-l-2 border-stone-300 dark:border-zinc-600

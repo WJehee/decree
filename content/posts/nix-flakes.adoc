@@ -1,0 +1,8 @@
+---
+title: "Getting Started with Nix Flakes"
+date: 2024-01-10T12:00:00+02:00
+description: "Why I switched to flakes and how you can too"
+draft: false
+---
+
+Why I switched to flakes and how you can too.

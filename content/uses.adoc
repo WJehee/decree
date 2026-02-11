@@ -3,17 +3,51 @@ title = "Uses"
 layout = "single"
 +++
 
-== Hardware
-
-- Laptop: https://frame.work[Framework 13]
-- Phone: Google Pixel 9a
-
-== Nixos 
-
+[.columns]
+****
+[.column]
+--
+[discrete]
+=== Laptop: https://frame.work[Framework 13]
 All my computer run NixOS, https://github.com/wjehee/.garland[my configuration] shows all the tools and configurations I use in more detail.
 In addition, I use https://github.com/danth/stylix[Stylix] for theming my setup.
 
-=== Development
+* https://neovim.io/[Neovim] as my editor.
+* https://hypr.land/[Hyprland] as my window manager.
+* https://github.com/Alexays/Waybar[Waybar] as my status bar.
+* https://github.com/alacritty/alacritty[Alacritty] as my terminal emulator.
 
-Blabla
+*Development* +
+I use git with https://github.com/jj-vcs/jj[jj (jujutsu)] for version control. +
+My projects almost always use https://nixos.wiki/wiki/flakes[Nix flakes] as well as https://github.com/casey/just[justfiles]. +
+I mostly write code in *Rust*, *Elixir* or *Python*.
+--
+
+[.column]
+--
+[discrete]
+=== Phone: Google Pixel 9a
+
+Running https://grapheneos.org/[GrapheneOS] with https://kvaesitso.mm20.de/[Kvaesitso] as a launcher. +
+I use https://arcticons.com/[Arcticons] + https://f-droid.org/packages/com.kaanelloed.iconeration/[Alembicons] for icons. +
+
+* https://keepassxc.org/[Keepass (XC)] for password management.
+* https://organicmaps.app/[Organic maps] for navigation.
+* https://signal.org/nl/[Signal] (with https://molly.im/[Molly]) and https://threema.com/en[Threema] for messaging.
+* https://immich.app/[Immich] for photo storage and browsing.
+* https://antennapod.org/[Antennapod] for listening to podcasts.
+* https://github.com/polymorphicshade/Tubular[Tubular] for watching videos.
+* https://github.com/breezy-weather/breezy-weather[Breezy weather] for weather forecasts.
+* https://www.davx5.com/[DAVx5] and https://icsx5.bitfire.at/[ICSx5] for calendar and tasks synchronization.
+* https://syncthing.net/[Syncthing] with https://github.com/researchxxl/syncthing-android[Syncthing fork] for file synchronization.
+* https://catima.app/[Catima] for loyalty cards and tickets.
+--
+****
+
+== Hacking tools
+
+* RTL-SDR v4
+* HackRF Pro
+* Ifixit kit
+* Pinecil soldering iron
 

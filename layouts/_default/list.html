@@ -9,27 +9,34 @@
         </div>
     {{ end }}
 
-    <div class="space-y-8">
-        {{ range .Pages.ByDate.Reverse }}
-            <article class="group border-b border-stone-200 dark:border-zinc-800 pb-8">
-                <a href="{{ .RelPermalink }}" class="block">
-                    <h3 class="font-bold text-stone-900 dark:text-zinc-100 group-hover:text-stone-600 dark:group-hover:text-zinc-400 transition-colors">
-                        {{ .Title }}
-                    </h3>
-                    {{ with .Date }}
-                        <time class="text-sm text-stone-500 dark:text-zinc-500 mt-1 block" datetime="{{ .Format "2006-01-02" }}">
-                            {{ .Format "January 2, 2006" }}
-                        </time>
-                    {{ end }}
-                    {{ with .Summary }}
-                        <p class="text-stone-600 dark:text-zinc-400 mt-2 text-base">
-                            {{ . }}
-                        </p>
-                    {{ end }}
-                </a>
-            </article>
-        {{ end }}
-    </div>
+    {{ $pages := .Pages.ByDate.Reverse }}
+    {{ range $pages.GroupByDate "2006" "desc" }}
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-stone-900 dark:text-zinc-100 mb-4">{{ .Key }}</h2>
+            <div class="space-y-4">
+                {{ range .Pages }}
+                    <article class="group border-b border-stone-200 dark:border-zinc-800 pb-4">
+                        <a href="{{ .RelPermalink }}" class="flex items-baseline gap-4">
+                            <h3 class="font-bold text-lg text-stone-900 dark:text-zinc-100 group-hover:text-stone-600 dark:group-hover:text-zinc-400 transition-colors shrink-0">
+                                {{ .Title }}
+                            </h3>
+                            {{ with .Description }}
+                                <span class="text-stone-400 dark:text-zinc-600 shrink-0">&mdash;</span>
+                                <p class="text-stone-600 dark:text-zinc-400 group-hover:text-stone-500 dark:group-hover:text-zinc-500 transition-colors text-lg truncate min-w-0">
+                                    {{ . }}
+                                </p>
+                            {{ end }}
+                            {{ with .Date }}
+                                <time class="text-base text-stone-500 dark:text-zinc-500 group-hover:text-stone-400 dark:group-hover:text-zinc-600 transition-colors shrink-0 ml-auto" datetime="{{ .Format "2006-01-02" }}">
+                                    {{ .Format "January 2, 2006" }}
+                                </time>
+                            {{ end }}
+                        </a>
+                    </article>
+                {{ end }}
+            </div>
+        </div>
+    {{ end }}
 </div>
 
 {{ end }}

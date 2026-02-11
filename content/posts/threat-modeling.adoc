@@ -1,0 +1,8 @@
+---
+title: "Practical Threat Modeling for Small Teams"
+date: 2024-06-03T09:15:00+02:00
+description: "Lightweight approaches to threat modeling that actually work"
+draft: false
+---
+
+Lightweight approaches to threat modeling that actually work.
