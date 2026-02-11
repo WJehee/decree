@@ -1,0 +1,10 @@
+== Personal Website
+
+Wouter Jehee's personal website.
+
+=== Built using
+
+- https://gohugo.io[Hugo]
+- https://tailwindcss.com/[TailwindCSS]
+- https://asciidoc.org/[AsciiDoc]
+

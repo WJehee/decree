@@ -1,0 +1,17 @@
+{{ define "main" }}
+
+<svg id="connectionSvg" class="absolute inset-0 w-full h-full pointer-events-none z-10" style="top: 0;"></svg>
+
+<section id="hero" class="mb-128">
+    <div class="container mx-auto grid grid-cols-4">
+        <div class="col-span-3">
+            <hgroup>
+                <h1>Wouter Jehee</h1>
+                <h2>Security Engineer</h2>
+            </hgroup>
+            {{ partial "quote.html" . }}
+        </div>
+    </div>
+</section>
+
+{{ end }}

@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@source "hugo_stats.json";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: "Satoshi", "Helvetica", sans-serif;
+    --font-serif: "Libre Baskerville", "Baskerville", Georgia, serif;
+
+    --radius: 300px;
+}
+
+@layer base {
+    :root {
+        color-scheme: light;
+    }
+
+    .dark {
+        color-scheme: dark;
+    }
+
+    body {
+        font-family: var(--font-serif);
+        @apply transition-colors duration-300;
+    }
+
+    .dark body {
+        font-family: var(--font-sans);
+    }
+
+    h1 {
+        @apply text-8xl font-bold;
+    }
+
+    h2 {
+        @apply text-4xl font-bold;
+    }
+
+    h3 {
+        @apply text-2xl;
+    }
+
+    p {
+        @apply text-lg;
+    }
+
+    section {
+        @apply mb-64;
+    }
+}
+
+@layer components {
+
+}
+
+@layer utilities {
+
+}
+

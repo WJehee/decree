@@ -1,0 +1,7 @@
+<blockquote>
+    <p id="quote"></p>
+</blockquote>
+<script>
+    const quotes = {{ site.Data.quotes | jsonify | safeJS }};
+    document.getElementById("quote").textContent = quotes[Math.floor(Math.random() * quotes.length)];
+</script>
