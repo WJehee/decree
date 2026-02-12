@@ -23,13 +23,16 @@
     #             cp -r public $out
     #         '';
     #     };
+        asciidoctor-quiet = pkgs.writeShellScriptBin "asciidoctor" ''
+            ${pkgs.asciidoctor}/bin/asciidoctor "$@" 2> >(${pkgs.gnugrep}/bin/grep -v "is ignoring.*because it is missing extensions" >&2)
+        '';
     in
     {
         devShells.${system}.default = with pkgs; mkShell {
-            buildInputs = [ 
+            buildInputs = [
                 hugo
                 tailwindcss_4
-                asciidoctor
+                asciidoctor-quiet
             ];
         };
         # packages.${system}.default = website;
