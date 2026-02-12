@@ -8,7 +8,7 @@ layout = "single"
 [.column]
 --
 [discrete]
-=== Laptop: https://frame.work[Framework 13]
+=== Laptop - https://frame.work[Framework 13]
 All my computer run NixOS, https://github.com/wjehee/.garland[my configuration] shows all the tools and configurations I use in more detail.
 In addition, I use https://github.com/danth/stylix[Stylix] for theming my setup.
 
@@ -26,7 +26,7 @@ I mostly write code in *Rust*, *Elixir* or *Python*.
 [.column]
 --
 [discrete]
-=== Phone: Google Pixel 9a
+=== Phone - Google Pixel 9a
 
 Running https://grapheneos.org/[GrapheneOS] with https://kvaesitso.mm20.de/[Kvaesitso] as a launcher. +
 I use https://arcticons.com/[Arcticons] + https://f-droid.org/packages/com.kaanelloed.iconeration/[Alembicons] for icons. +
