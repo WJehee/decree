@@ -7,22 +7,23 @@
     let
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
-    #     website = with pkgs; stdenv.mkDerivation {
-    #         pname = "Zola blog: wouterjehee.com";
-    #         version = "1.0.0";
-    #         src = ./.;
-    #         buildInputs = [ 
-    #             zola
-    #             tailwindcss
-    #         ];
-    #         buildPhase = ''
-    #             tailwindcss -i styles/styles.css -o static/css/styles.css --minify
-    #             zola build
-    #         '';
-    #         installPhase = ''
-    #             cp -r public $out
-    #         '';
-    #     };
+        website = with pkgs; stdenv.mkDerivation {
+            pname = "wouterjehee.com";
+            version = "1.0.0";
+            src = ./.;
+            nativeBuildInputs = [
+                hugo
+                tailwindcss_4
+                asciidoctor-quiet
+                git
+            ];
+            buildPhase = ''
+                hugo --minify
+            '';
+            installPhase = ''
+                cp -r public $out
+            '';
+        };
         asciidoctor-quiet = pkgs.writeShellScriptBin "asciidoctor" ''
             ${pkgs.asciidoctor}/bin/asciidoctor "$@" 2> >(${pkgs.gnugrep}/bin/grep -v "is ignoring.*because it is missing extensions" >&2)
         '';
@@ -35,6 +36,6 @@
                 asciidoctor-quiet
             ];
         };
-        # packages.${system}.default = website;
+        packages.${system}.default = website;
     };
 }
