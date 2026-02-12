@@ -552,6 +552,42 @@
     }
 }
 
+/* Uses page tabs */
+.uses-tab {
+    text-decoration: none;
+    border-color: transparent;
+}
+
+.uses-panel {
+    display: none;
+}
+
+.uses-panel:first-of-type {
+    display: block;
+}
+
+.uses-panel:first-of-type:has(~ .uses-panel:target) {
+    display: none;
+}
+
+.uses-panel:target {
+    display: block;
+    animation: fade-in 0.5s ease-out;
+}
+
+/* Tab active state: default (first tab when no hash) */
+.uses-tabs:not(:has(.uses-panel:target)) .uses-tab:first-child {
+    @apply border-stone-900 dark:border-zinc-100 text-stone-900 dark:text-zinc-100;
+}
+
+/* Tab active state: nth tab when nth panel is targeted */
+.uses-tabs:has(.uses-panel:nth-of-type(1):target) .uses-tab:nth-child(1),
+.uses-tabs:has(.uses-panel:nth-of-type(2):target) .uses-tab:nth-child(2),
+.uses-tabs:has(.uses-panel:nth-of-type(3):target) .uses-tab:nth-child(3),
+.uses-tabs:has(.uses-panel:nth-of-type(4):target) .uses-tab:nth-child(4) {
+    @apply border-stone-900 dark:border-zinc-100 text-stone-900 dark:text-zinc-100;
+}
+
 .fade-in {
     animation: fade-in 0.5s ease-out;
 }

@@ -1,0 +1,41 @@
++++
+title = "RPG"
+weight = 2
+[build]
+  render = "never"
++++
+
+[.columns]
+****
+[.column]
+--
+[discrete]
+=== Library
+* Index Card RPG
+* Blades in the Dark
+* Mythic Bastionland
+* Knave
+* Crown & Skull Volume 1
+* Mausritter
+* Things from the Flood
+* Mothership
+* The Book of Gaub
+* Dolmenwood
+    ** The Ruined Abbey of St Clewyd
+    ** Winter's Daughter
+    ** Emelda's Song
+    ** The Fungus That Came to Blackeswell
+* The Midderlands
+--
+
+[.column]
+--
+[discrete]
+=== Tools of the trade
+* Dice
+* Leuchtturm 1917 notebooks
+* Coins and pouches by https://drawlab.com/[Drawlab]
+*
+--
+****
+

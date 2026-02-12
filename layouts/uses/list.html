@@ -1,0 +1,27 @@
+{{ define "main" }}
+
+<div class="container mx-auto px-6 py-16">
+    <h1 class="mb-8">{{ .Title }}</h1>
+
+    {{ $tabs := .Pages.ByWeight }}
+    {{ with $tabs }}
+    <div class="uses-tabs">
+        <nav class="flex gap-4 border-b border-stone-200 dark:border-zinc-800 mb-8">
+            {{ range $i, $tab := . }}
+                <a href="#{{ $tab.Title | urlize }}"
+                    class="uses-tab pb-2 text-base font-medium transition-colors border-b-2 -mb-px text-stone-500 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-zinc-100">
+                    {{ $tab.Title }}
+                </a>
+            {{ end }}
+        </nav>
+
+        {{ range $i, $tab := . }}
+            <div id="{{ $tab.Title | urlize }}" class="uses-panel prose max-w-none">
+                {{ $tab.Content }}
+            </div>
+        {{ end }}
+    </div>
+    {{ end }}
+</div>
+
+{{ end }}

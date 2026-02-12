@@ -1,0 +1,40 @@
++++
+title = "Tech"
+weight = 1
+[build]
+  render = "never"
++++
+
+[.columns]
+****
+[.column]
+--
+[discrete]
+=== Laptop - https://frame.work[Framework 13]
+All my computer run NixOS, https://github.com/wjehee/.garland[my configuration] shows all the tools and configurations I use in more detail.
+In addition, I use https://github.com/danth/stylix[Stylix] for theming my setup.
+
+* https://neovim.io/[Neovim] as my editor.
+* https://hypr.land/[Hyprland] as my window manager.
+* https://github.com/Alexays/Waybar[Waybar] as my status bar.
+* https://github.com/alacritty/alacritty[Alacritty] as my terminal emulator.
+
+*Development* +
+I use git with https://github.com/jj-vcs/jj[jj (jujutsu)] for version control. +
+My projects almost always use https://nixos.wiki/wiki/flakes[Nix flakes] as well as https://github.com/casey/just[justfiles]. +
+I mostly write code in *Rust*, *Elixir* and *Python*.
+--
+
+[.column]
+--
+[discrete]
+=== Hacking tools
+
+* https://www.rtl-sdr.com/[RTL-SDR v4]
+* https://greatscottgadgets.com/hackrf/pro/[HackRF Pro]
+* https://www.ifixit.com/[iFixit kit]
+* https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/[Pinecil soldering iron]
+
+--
+****
+
