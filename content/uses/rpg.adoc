@@ -32,10 +32,10 @@ weight = 2
 --
 [discrete]
 === Tools of the trade
-* Dice
+* Arguably too many dice
 * Leuchtturm 1917 notebooks
 * Coins and pouches by https://drawlab.com/[Drawlab]
-*
+* Sound effects through https://moodist.mvze.net/[Moodist]
 --
 ****
 

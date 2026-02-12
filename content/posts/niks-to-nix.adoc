@@ -1,0 +1,433 @@
++++
+title = "Niks to Nix"
+date = 2023-09-29
+description = "Installing NixOS on a VPS"
++++
+:experimental:
+
+Okay, I messed up... I forgot to copy my SSH keys / add new ones to my authorized keys on the server while distrohopping.
+This resulted in me losing access to my server since I only allow access with SSH keys.
+But it's fine, I wanted to try and run NixOS on my server anyway, so this is the perfect excuse to do that.
+
+So in this article I will set up my server again, this time running NixOS.
+The name comes from the Dutch word "niks" which means "nothing" and since we are starting from scratch I found it appropriate.
+I also happen to know that the name Nix also originated from the same word.
+
+In this article we will setup the following things:
+
+* A NixOS server with sensible defaults
+* Hosting my personal website
+* Radicale for calendar / todos (CALDAV)
+* Automically fetching certificates for any services running on the server
+
+== Virtual machine setup
+
+Since my server is still running and I use the services on a daily basis, my plan is to first test the configuration in a virtual machine and then deploy it once it is done, in order to minimize downtime.
+I will be using virt-manager for running my VMs and I'll be using the https://nixos.org/download[NixOS minimal ISO image].
+Before we get started with setting up the VM, we will setup a bridge network so that our server gets its own IP address on the network.
+
+=== Installing the VM
+
+. Open virt-manager and create a new virtual machine.
+. Select _Local install media (ISO or CDROM)_.
+. Select the NixOS minimal ISO image.
+. Choose memory and CPU settings (defaults are fine).
+. Enable storage and create a disk image (again, defaults are fine).
+. Check the btn:[Customize configuration before install] checkbox.
+. Under _Hypervisor Details_, change the firmware to UEFI to enable it.
+. Under the network tab, change the network source to your bridge network.
+. Click btn:[Begin installation].
+
+Now the VM is ready to go.
+
+== Server configuration
+
+We will configure the general settings of the server, the Nginx server for hosting a static site and https://radicale.org/v3.html[Radicale].
+Both the static site and Radicale will automatically have SSL certificates generated through ACME.
+All the configuration is done in the `hosts/HOSTNAME/configuration.nix` file unless otherwise stated.
+
+=== General configuration
+
+First we set up the bootloader, since we are using UEFI we need the following settings.
+
+[source,nix]
+----
+boot.loader = {
+    grub.enable = true;
+    grub.device = "nodev";
+    grub.efiSupport = true;
+    grub.useOSProber = true;
+    efi.canTouchEfiVariables = true;
+};
+----
+
+Here we install some basic programs, such as neovim for editing files and git for cloning the repository we put our config files in.
+
+[source,nix]
+----
+environment.systemPackages = with pkgs; [
+    git
+    apacheHttpd                                 # We need this for htpasswd, which is used by radicale
+];
+system.stateVersion = "23.05";
+time.timeZone = "Europe/Amsterdam";             # Change to your timezone
+i18n.defaultLocale = "en_US.UTF-8";
+
+programs.neovim.enable = true;
+----
+
+Here we create an admin user and disable root login, but we allow the admin user to use doas to get root permissions.
+We also only enable public key authentication for SSH logins, so be sure to add your public key to the authorized keys section.
+
+[source,nix]
+----
+services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = false;
+    settings.KbdInteractiveAuthentication = false;
+    settings.PermitRootLogin = "no";
+};
+users.users.admin = {
+    isNormalUser = true;
+    extraGroups = [
+        "docker"
+    ];
+    openssh.authorizedKeys.keys = [
+        "YOUR SSH PUBLIC KEY HERE"
+        "ANOTHER KEY?"
+    ];
+};
+security.sudo.enable = false;
+security.doas.enable = true;
+security.doas.extraRules = [{
+    users = [ "admin" ];
+    keepEnv = true;
+    persist = true;
+}];
+----
+
+I prefer using doas but you can also decide to use sudo, then you must at least change the following in the configuration:
+
+[source,nix]
+----
+users.users.admin.extraGroups = [
+    "docker"
+    "wheel"             # add the admin user to the wheel group
+];
+security.sudo = {
+    enable = true;      # enable sudo
+    groups = [
+        "wheel"         # allow users in the wheel group to use sudo
+    ];
+};
+----
+
+Lastly, we set the firewall to allow only the following ports:
+
+* Port 22 (SSH)
+* Port 80 and 443 (HTTP/HTTPS), we will redirect all HTTP traffic to HTTPS.
+
+[source,nix]
+----
+networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 22 80 443 ];
+};
+----
+
+=== Radicale
+
+[source,nix]
+----
+services.radicale = {
+    enable = true;
+    settings = {
+        server = {
+            hosts = [ "0.0.0.0:5232" "[::]:5232" ];
+        };
+        auth = {
+            type = "htpasswd";
+            htpasswd_filename = "/etc/radicale/users";
+            htpasswd_encryption = "bcrypt";
+        };
+    };
+};
+----
+
+=== Nginx
+
+[source,nix]
+----
+security.acme = {
+    acceptTerms = true;
+    defaults.email = "YOUR EMAIL HERE";
+};
+services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+    virtualHosts = {
+        "domain.com" = {
+            forceSSL = true;
+            enableACME = true;
+            root = "/home/admin/domain.com";
+            serverAliases = [ "radicale.domain.com" ];
+        };
+       "radicale.domain.com" = {
+           forceSSL = true;
+           useACMEHost = "domain.com";       # reuse the same certificate for this domain
+           locations."/" = {
+               # setup a reverse proxy for radicale
+               proxyPass = "http://localhost:5232/";
+               extraConfig = ''
+                   proxy_set_header X-Script-Name /;
+                   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                   proxy_pass_header Authorization;
+               '';
+           };
+       };
+    };
+};
+----
+
+=== DNS
+
+Since we are replacing an old server, we first need to change our DNS records such that they point to our newly configured server.
+This is important because we are trying to setup SSL certificates for our domain name.
+
+First we need to find our public IP, there are several ways to do it, I like to do it like this:
+
+[source,sh]
+----
+curl -4 ifconfig.co     # IPV4
+curl ifconfig.co        # IPV6
+----
+
+Then go to your domain registrar and change your A and AAAA records.
+We also need to setup port forwarding on our router in order to access it from the internet.
+So setup a port forwarding rule for ports 80 and 443 using your local IP address (found by using `ip addr`).
+
+== Installing in a virtual machine
+
+Become root:
+
+[source,sh]
+----
+sudo su
+----
+
+=== Partitioning the disk
+
+[source,sh]
+----
+parted /dev/vda mklabel gpt
+parted /dev/vda mkpart primary fat32 2048s 500M
+parted /dev/vda set 1 esp on
+parted -- /dev/vda mkpart primary ext4 500M -1s
+parted /dev/vda quit
+
+mkfs.fat -F 32 /dev/vda1
+fatlabel /dev/vda1 BOOT
+mkfs.ext4 /dev/vda2 -L ROOT
+mount /dev/disk/by-label/ROOT /mnt
+mkdir -p /mnt/boot
+mount /dev/disk/by-label/BOOT /mnt/boot
+----
+
+=== Configuration
+
+Generate the hardware-configuration and get the configuration files:
+
+[source,sh]
+----
+nixos-generate-config --root /mnt
+nix-shell -p git
+git clone https://github.com/wjehee/.dotfiles-nix
+cp /mnt/etc/nixos/hardware-configuration.nix .dotfiles-nix/hosts/HOSTNAME/
+----
+
+=== Perform the install
+
+[source,sh]
+----
+cd .dotfiles-nix/
+git add .
+nixos-install --flake .#HOSTNAME
+----
+
+Copy the configuration onto the installed version:
+
+[source,sh]
+----
+cd ..
+cp -r .dotfiles-nix /mnt/home/admin
+----
+
+. Change into the installed version by running: `nixos-enter`
+. Change ownership of .dotfiles-nix: `chown -R admin:users home/admin/.dotfiles-nix`
+. Set the password for the admin user: `passwd admin`
+. Create the user file for radicale: `htpasswd -B -c /etc/radicale-users USERNAME`
+. Optionally create more calendar users, by running: `htpasswd -B /etc/radicale-users USERNAME`
+. Exit out of the install with `exit` and then `reboot`
+
+It might take some time before the SSL certificates are set up, if it still doesn't work after a while, just SSH into the server and rebuild.
+
+== Deploying to a VPS
+
+Next we deploy our Nix configuration to a VPS on https://www.vultr.com/[Vultr] and setup a GitHub action to deploy our static site when we make a change.
+
+. Deploy a new server instance
+. Pick a plan
+. Choose a location
+. In a new tab, navigate to the https://my.vultr.com/iso/add/[upload ISO page]
+. Copy the link to the https://nixos.org/download[latest ISO] (I use the minimal image), paste it and click btn:[Upload]
+. Select the ISO you just uploaded
+. Finish the rest of the steps and click btn:[Deploy now]
+. After the server finishes setting up, press the btn:[View console] button to get into a terminal
+
+=== Preparing the installation
+
+This section is roughly the same as the VM setup above with some small tweaks regarding the specifics of Vultr.
+Become root with `sudo su`.
+
+The partitioning on Vultr is different because of the following:
+
+* Vultr uses BIOS instead of UEFI
+* No boot drive is needed
+* Since I use a small instance, swap space is added to make the installation work
+
+[source,sh]
+----
+parted /dev/vda mklabel msdos
+parted -- /dev/vda mkpart primary 1MiB -GiB
+parted -- /dev/vda mkpart primary linux-swap -1GiB 100%
+parted /dev/vda quit
+
+mkfs.ext4 -L ROOT /dev/vda1
+mkswap -L SWAP /dev/vda2
+swapon /dev/vda2
+mount /dev/disk/by-label/ROOT /mnt
+----
+
+The rest is mostly the same as above.
+
+[source,sh]
+----
+nixos-generate-config --root /mnt
+nix-shell -p git
+git clone https://github.com/wjehee/.dotfiles-nix
+cp /mnt/etc/nixos/hardware-configuration.nix .dotfiles-nix/hosts/HOSTNAME/
+----
+
+Perform the install, this may take a while.
+
+[source,sh]
+----
+cd .dotfiles-nix/
+git add .
+nixos-install --flake .#HOSTNAME
+----
+
+Copy the configuration onto the installed version:
+
+[source,sh]
+----
+cd ..
+cp -r .dotfiles-nix /mnt/home/admin
+----
+
+. Change into the installed version by running: `nixos-enter`
+. Change ownership of .dotfiles-nix: `chown -R admin:users home/admin/.dotfiles-nix`
+. Set the password for the admin user: `passwd admin`
+. Create the user file for radicale: `htpasswd -B -c /etc/radicale-users USERNAME`
+. Optionally create more calendar users, by running: `htpasswd -B /etc/radicale-users USERNAME`
+. Run `exit` to leave the installed version
+. In the Vultr UI, go to menu:Settings[Custom ISO] and remove it, this will reboot the server
+
+=== Setting up CI
+
+Use the following template GitHub action with some small changes:
+
+[source,yaml]
+----
+name: CI
+run-name: Zola blog deployment
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: deploy
+    steps:
+      - name: Checkout the current branch
+        uses: actions/checkout@v3
+
+      - name: Initialize the ssh-agent
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Install Zola
+        run: sudo snap install zola --edge
+
+      - name: Build the website
+        run: zola build
+
+      - name: Scan the host key
+        run: mkdir -p ~/.ssh/ && ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
+        env:
+          DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER }}
+
+      - name: Deploy the website
+        run: >-
+          rsync -avx --delete --exclude '.ssh' public/ $DEPLOY_USERNAME@$DEPLOY_SERVER:/var/www/SITE_NAME
+        env:
+          DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER }}
+          DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
+----
+
+Create a new SSH key pair for this GitHub action:
+
+[source,sh]
+----
+ssh-keygen -f ~/.ssh/deploy
+----
+
+Press enter twice to not set a password.
+
+On GitHub, go to the settings of your static site's repository, then navigate to menu:Settings[Environments].
+Create a new environment, name it `deploy`, then add the following three secrets:
+
+DEPLOY_SERVER:: The IP address of your VPS
+DEPLOY_USERNAME:: `admin`
+SSH_PRIVATE_KEY:: Contents of the newly created SSH key at `~/.ssh/deploy`
+
+Then, in the configuration file on the server, add the contents of `~/.ssh/deploy.pub` as follows:
+
+[source,nix]
+----
+users.users = {
+    admin = {
+        isNormalUser = true;
+        extraGroups = [
+            "docker"
+        ];
+        openssh.authorizedKeys.keys = [
+            "SSH KEY FOR LOGGING IN"
+            "ADD NEW SSH KEY HERE"               # insert ~/.ssh/deploy.pub contents here
+        ];
+    };
+};
+----
+
+Then rebuild the server.
+Lastly create a folder named after your static site and change the owner to the admin user:
+
+[source,sh]
+----
+doas mkdir -p /var/www/SITE_NAME
+doas chown admin:users /var/www/SITE_NAME
+----
+
+Now, whenever you push to the repository containing your website, it will automatically update your website to reflect the changes.

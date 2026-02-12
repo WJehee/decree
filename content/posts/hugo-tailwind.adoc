@@ -1,8 +1,0 @@
----
-title: "Building This Site with Hugo and TailwindCSS 4"
-date: 2025-02-20T11:00:00+02:00
-description: "How I built a minimal portfolio site without npm"
-draft: false
----
-
-How I built a minimal portfolio site without npm.

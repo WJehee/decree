@@ -1,8 +1,0 @@
----
-title: "WireGuard VPN on NixOS"
-date: 2023-09-22T08:30:00+02:00
-description: "A quick guide to setting up WireGuard on NixOS"
-draft: false
----
-
-A quick guide to setting up WireGuard on NixOS.
