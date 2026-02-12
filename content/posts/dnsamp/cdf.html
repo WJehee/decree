@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complementary CDF</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body { background: transparent; }
+    canvas { display: block; width: 100% !important; height: 100% !important; }
+  </style>
+</head>
+<body>
+  <canvas id="cdfChart"></canvas>
+
+  <script>
+    const themes = {
+      light: { bg: '#fafaf9', line1: '#2563eb', line2: '#dc2626', grid: '#e7e5e4', text: '#44403c', annotation: '#57534e' },
+      dark:  { bg: '#09090b', line1: '#60a5fa', line2: '#f87171', grid: '#3f3f46', text: '#d4d4d8', annotation: '#a1a1aa' },
+    };
+
+    const annotations = [
+      { label: 'holland.com',            x: 1000, y: 0.45, textY: 0.80 },
+      { label: 'toetsingonline.nl',      x: 1500, y: 0.40, textY: 0.75 },
+      { label: 'emissieautoriteit.nl',   x: 2000, y: 0.05, textY: 0.40 },
+      { label: 'lijstvangevallenen.nl',  x: 3000, y: 0.01, textY: 0.36 },
+      { label: 'politie.nl',            x: 4000, y: 0.00, textY: 0.35 },
+    ];
+
+    const ccdfData = {
+      diffs: [{"x":-11,"y":1},{"x":29.63,"y":0.651412},{"x":70.26,"y":0.640014},{"x":110.89,"y":0.614063},{"x":151.52,"y":0.591443},{"x":192.15,"y":0.52411},{"x":232.78,"y":0.511836},{"x":273.41,"y":0.493775},{"x":314.04,"y":0.472558},{"x":354.67,"y":0.46607},{"x":395.3,"y":0.462914},{"x":435.93,"y":0.460635},{"x":476.56,"y":0.454848},{"x":517.19,"y":0.453621},{"x":557.82,"y":0.451692},{"x":598.45,"y":0.450815},{"x":639.08,"y":0.449237},{"x":679.71,"y":0.449237},{"x":720.34,"y":0.447834},{"x":760.97,"y":0.446081},{"x":801.6,"y":0.445906},{"x":842.23,"y":0.445906},{"x":882.86,"y":0.445906},{"x":923.49,"y":0.445906},{"x":964.12,"y":0.445906},{"x":1004.75,"y":0.445204},{"x":1045.38,"y":0.444854},{"x":1086.01,"y":0.444503},{"x":1126.64,"y":0.444503},{"x":1167.27,"y":0.442749},{"x":1207.9,"y":0.439067},{"x":1248.53,"y":0.434508},{"x":1289.16,"y":0.433281},{"x":1329.79,"y":0.427494},{"x":1370.42,"y":0.420305},{"x":1411.05,"y":0.402946},{"x":1451.68,"y":0.388567},{"x":1492.31,"y":0.366474},{"x":1532.94,"y":0.334911},{"x":1573.57,"y":0.303174},{"x":1614.2,"y":0.243205},{"x":1654.83,"y":0.188497},{"x":1695.46,"y":0.142732},{"x":1736.09,"y":0.101876},{"x":1776.72,"y":0.074873},{"x":1817.35,"y":0.058916},{"x":1857.98,"y":0.046817},{"x":1898.61,"y":0.038401},{"x":1939.24,"y":0.034719},{"x":1979.87,"y":0.030335},{"x":2020.5,"y":0.026653},{"x":2061.13,"y":0.023496},{"x":2101.76,"y":0.020866},{"x":2142.39,"y":0.02034},{"x":2183.02,"y":0.019288},{"x":2223.65,"y":0.018061},{"x":2264.28,"y":0.017359},{"x":2304.91,"y":0.016658},{"x":2345.54,"y":0.015781},{"x":2386.17,"y":0.014729},{"x":2426.8,"y":0.013677},{"x":2467.43,"y":0.013502},{"x":2508.06,"y":0.013151},{"x":2548.69,"y":0.012099},{"x":2589.32,"y":0.012099},{"x":2629.95,"y":0.011748},{"x":2670.58,"y":0.011748},{"x":2711.21,"y":0.011748},{"x":2751.84,"y":0.011222},{"x":2792.47,"y":0.011222},{"x":2833.1,"y":0.011222},{"x":2873.73,"y":0.011222},{"x":2914.36,"y":0.011222},{"x":2954.99,"y":0.009118},{"x":2995.62,"y":0.009118},{"x":3036.25,"y":0.009118},{"x":3076.88,"y":0.008066},{"x":3117.51,"y":0.008066},{"x":3158.14,"y":0.007715},{"x":3198.77,"y":0.00754},{"x":3239.4,"y":0.00754},{"x":3280.03,"y":0.00754},{"x":3320.66,"y":0.007014},{"x":3361.29,"y":0.006488},{"x":3401.92,"y":0.006312},{"x":3442.55,"y":0.006312},{"x":3483.18,"y":0.00491},{"x":3523.81,"y":0.00491},{"x":3564.44,"y":0.004734},{"x":3605.07,"y":0.003507},{"x":3645.7,"y":0.002455},{"x":3686.33,"y":0.002455},{"x":3726.96,"y":0.002104},{"x":3767.59,"y":0.001753},{"x":3808.22,"y":0.001753},{"x":3848.85,"y":0.001578},{"x":3889.48,"y":0.001578},{"x":3930.11,"y":0.001227},{"x":3970.74,"y":0.000701},{"x":4011.37,"y":0.000526},{"x":4052,"y":0}],
+      responses: [{"x":66,"y":1},{"x":106.67,"y":0.709627},{"x":147.34,"y":0.641066},{"x":188.01,"y":0.614764},{"x":228.68,"y":0.607575},{"x":269.35,"y":0.536384},{"x":310.02,"y":0.517096},{"x":350.69,"y":0.507452},{"x":391.36,"y":0.477643},{"x":432.03,"y":0.467824},{"x":472.7,"y":0.46344},{"x":513.37,"y":0.462213},{"x":554.04,"y":0.456426},{"x":594.71,"y":0.453621},{"x":635.38,"y":0.452043},{"x":676.05,"y":0.451166},{"x":716.72,"y":0.449237},{"x":757.39,"y":0.449237},{"x":798.06,"y":0.448361},{"x":838.73,"y":0.446607},{"x":879.4,"y":0.446081},{"x":920.07,"y":0.445906},{"x":960.74,"y":0.445906},{"x":1001.41,"y":0.445906},{"x":1042.08,"y":0.445906},{"x":1082.75,"y":0.445906},{"x":1123.42,"y":0.444854},{"x":1164.09,"y":0.444854},{"x":1204.76,"y":0.444503},{"x":1245.43,"y":0.443275},{"x":1286.1,"y":0.439593},{"x":1326.77,"y":0.43556},{"x":1367.44,"y":0.434333},{"x":1408.11,"y":0.430124},{"x":1448.78,"y":0.421182},{"x":1489.45,"y":0.406628},{"x":1530.12,"y":0.391198},{"x":1570.79,"y":0.370156},{"x":1611.46,"y":0.342276},{"x":1652.13,"y":0.307031},{"x":1692.8,"y":0.262143},{"x":1733.47,"y":0.202174},{"x":1774.14,"y":0.151675},{"x":1814.81,"y":0.111871},{"x":1855.48,"y":0.081185},{"x":1896.15,"y":0.063651},{"x":1936.82,"y":0.051026},{"x":1977.49,"y":0.040505},{"x":2018.16,"y":0.036121},{"x":2058.83,"y":0.030861},{"x":2099.5,"y":0.028231},{"x":2140.17,"y":0.023496},{"x":2180.84,"y":0.021392},{"x":2221.51,"y":0.02034},{"x":2262.18,"y":0.019113},{"x":2302.85,"y":0.017535},{"x":2343.52,"y":0.017359},{"x":2384.19,"y":0.016658},{"x":2424.86,"y":0.015781},{"x":2465.53,"y":0.014729},{"x":2506.2,"y":0.013677},{"x":2546.87,"y":0.013502},{"x":2587.54,"y":0.012099},{"x":2628.21,"y":0.012099},{"x":2668.88,"y":0.012099},{"x":2709.55,"y":0.011748},{"x":2750.22,"y":0.011748},{"x":2790.89,"y":0.011748},{"x":2831.56,"y":0.011748},{"x":2872.23,"y":0.011222},{"x":2912.9,"y":0.011222},{"x":2953.57,"y":0.011222},{"x":2994.24,"y":0.011222},{"x":3034.91,"y":0.01017},{"x":3075.58,"y":0.009118},{"x":3116.25,"y":0.009118},{"x":3156.92,"y":0.008066},{"x":3197.59,"y":0.008066},{"x":3238.26,"y":0.008066},{"x":3278.93,"y":0.00754},{"x":3319.6,"y":0.00754},{"x":3360.27,"y":0.00754},{"x":3400.94,"y":0.007014},{"x":3441.61,"y":0.006488},{"x":3482.28,"y":0.006312},{"x":3522.95,"y":0.006312},{"x":3563.62,"y":0.00491},{"x":3604.29,"y":0.00491},{"x":3644.96,"y":0.00491},{"x":3685.63,"y":0.003682},{"x":3726.3,"y":0.002455},{"x":3766.97,"y":0.002455},{"x":3807.64,"y":0.002104},{"x":3848.31,"y":0.001753},{"x":3888.98,"y":0.001753},{"x":3929.65,"y":0.001578},{"x":3970.32,"y":0.001578},{"x":4010.99,"y":0.001227},{"x":4051.66,"y":0.000701},{"x":4092.33,"y":0.000526},{"x":4133,"y":0.000175}]
+    };
+
+    let chart = null;
+
+    function isDark() {
+      return localStorage.getItem('theme') !== 'light';
+    }
+
+    function getScheme() {
+      return isDark() ? themes.dark : themes.light;
+    }
+
+    function buildChart() {
+      const scheme = getScheme();
+      document.documentElement.style.background = scheme.bg;
+      document.body.style.background = scheme.bg;
+
+      const data = {
+        datasets: [
+          {
+            label: 'response - request sizes',
+            data: ccdfData.diffs,
+            borderColor: scheme.line1,
+            backgroundColor: scheme.line1 + '20',
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0,
+            stepped: 'before',
+          },
+          {
+            label: 'response sizes',
+            data: ccdfData.responses,
+            borderColor: scheme.line2,
+            backgroundColor: scheme.line2 + '20',
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0,
+            stepped: 'before',
+          },
+        ],
+      };
+
+      const config = {
+        type: 'line',
+        data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              type: 'linear',
+              title: { display: true, text: 'Size (bytes)', color: scheme.text },
+              grid: { color: scheme.grid },
+              ticks: { color: scheme.text },
+            },
+            y: {
+              title: { display: true, text: '% of responses \u2265 size', color: scheme.text },
+              grid: { color: scheme.grid },
+              ticks: { color: scheme.text },
+              min: 0,
+              max: 1,
+            },
+          },
+          plugins: {
+            legend: { labels: { color: scheme.text } },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${(ctx.parsed.y * 100).toFixed(1)}%`,
+              },
+            },
+          },
+        },
+        plugins: [annotationPlugin(scheme)],
+      };
+
+      if (chart) chart.destroy();
+      chart = new Chart(document.getElementById('cdfChart'), config);
+    }
+
+    function annotationPlugin(scheme) {
+      return {
+        id: 'cdfAnnotations',
+        afterDraw(chart) {
+          const { ctx } = chart;
+          const xScale = chart.scales.x;
+          const yScale = chart.scales.y;
+
+          ctx.save();
+          ctx.fillStyle = scheme.annotation;
+          ctx.strokeStyle = scheme.annotation;
+          ctx.font = '11px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.lineWidth = 1;
+
+          for (const a of annotations) {
+            const px = xScale.getPixelForValue(a.x);
+            const pyFrom = yScale.getPixelForValue(a.textY);
+            const pyTo = yScale.getPixelForValue(a.y);
+
+            if (px < xScale.left || px > xScale.right) continue;
+
+            ctx.beginPath();
+            ctx.moveTo(px, pyFrom - 14);
+            ctx.lineTo(px, pyTo + 4);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(px, pyTo + 4);
+            ctx.lineTo(px - 3, pyTo + 10);
+            ctx.lineTo(px + 3, pyTo + 10);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillText(a.label, px, pyFrom - 18);
+          }
+          ctx.restore();
+        },
+      };
+    }
+
+    // Watch for theme changes on parent document
+    try {
+      const observer = new MutationObserver(() => setTimeout(buildChart, 100));
+      observer.observe(window.parent.document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    } catch (e) {}
+
+    buildChart();
+  </script>
+</body>
+</html>

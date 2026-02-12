@@ -1,9 +1,9 @@
 +++
 title = "Lorem Ipsum"
 layout = "single"
-_build.list = "never"
-_build.publishResources = true
-_build.render = "always"
+build.list = "never"
+build.publishResources = true
+build.render = "always"
 +++
 
 *What is this page?* +

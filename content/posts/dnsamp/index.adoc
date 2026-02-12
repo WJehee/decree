@@ -1,0 +1,25 @@
++++
+title = "DNS Amplification in the Dutch Digital Landscape"
+date = 2023-04-21
+description = "Research paper and attack POC"
++++
+
+For the Hacking Lab course at TU Delft, my team and I investigated the DNS amplification potential of roughly 1800 domain names owned by the Dutch government. Inspired by the 2021 paper "ANYway: measuring the amplification DDoS potential of domains" by van der Toorn et al., we queried the authoritative nameservers for each domain using both ANY and TXT record types to measure how much a small DNS request could be amplified into a large response directed at a victim.
+
+Our findings showed that Dutch government nameservers could amplify DNS requests by up to 70x. The worst offenders for ANY queries were predominantly hosted by Akamai, while the bottom of the list was dominated by AWS servers that truncate or force TCP for ANY requests. Interestingly, the worst offenders for TXT and ANY queries did not correlate, indicating that TXT amplification is driven by leftover verification records rather than server configuration.
+
+We also built a proof of concept attack tool in Go using the GoPacket library to simulate an amplification attack in a containerized environment. Using all government domains, the simulation achieved 11x amplification (147 MB/s). When cherry-picking the 50 domains with the largest responses, this jumped to 49x amplification (644 MB/s), showing that an attacker's choice of domains dramatically affects attack potency.
+
+++++
+<div style="overflow:hidden;">
+<div style="float:right; width:55%; margin:0 0 1rem 1.5rem;">
+<iframe src="cdf.html" width="100%" height="400" style="border:none;"></iframe>
+</div>
+<p>The graph shows the complementary CDF (CCDF) of DNS response sizes across all queried domain-nameserver pairs. For any given size on the x-axis, the y-axis shows the fraction of responses that are at least that large. The blue line plots the difference between response and request size (the net amplification payload), while the red line plots the raw response size. Around 45% of all responses exceed 1000 bytes, and the top 53 domain-nameserver pairs produced responses over 3000 bytes, with the largest reaching 4091 bytes. Some annotated domains like <code>politie.nl</code> and <code>holland.com</code> highlight notable outliers. Values below zero on the blue line indicate cases where the response was actually smaller than the request, meaning there is actually a reduction in the attack, the opposite of amplification.</p>
+</div>
+++++
+
+Our main recommendations were to implement RFC8482 to block ANY requests over UDP (reducing maximum amplification from ~70x to ~12x), clean up unnecessary TXT records, and introduce rate limiting on nameservers.
+
+The full paper and code are available on https://github.com/gregor160300/IN4253ET-HackingLab/[GitHub].
+
