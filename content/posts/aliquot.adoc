@@ -1,6 +1,0 @@
-+++
-title = "Visualizing Aliquot Sequences"
-date = 2024-08-28
-description = "Using NetworkX and PyVis"
-+++
-

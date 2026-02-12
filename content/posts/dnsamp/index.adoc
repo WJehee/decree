@@ -19,7 +19,7 @@ We also built a proof of concept attack tool in Go using the GoPacket library to
 </div>
 ++++
 
-Our main recommendations were to implement RFC8482 to block ANY requests over UDP (reducing maximum amplification from ~70x to ~12x), clean up unnecessary TXT records, and introduce rate limiting on nameservers.
+Our main recommendations were to implement https://www.rfc-editor.org/rfc/rfc8482[RFC8482] to block ANY requests over UDP (reducing maximum amplification from ~70x to ~12x), clean up unnecessary TXT records, and introduce rate limiting on nameservers.
 
 The full paper and code are available on https://github.com/gregor160300/IN4253ET-HackingLab/[GitHub].
 
