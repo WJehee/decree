@@ -1,5 +1,0 @@
-+++
-title = 'Niks to Nix | Home Assistant'
-date = 2025-11-24
-description = 'Installing NixOS with HA on a Raspberry Pi'
-+++

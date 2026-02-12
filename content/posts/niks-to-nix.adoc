@@ -1,5 +1,5 @@
 +++
-title = "Niks to Nix"
+title = "Niks to Nix | Part 1"
 date = 2023-09-29
 description = "Installing NixOS on a VPS"
 +++

@@ -1,0 +1,317 @@
++++
+title = 'Niks to Nix | Part 2'
+date = 2025-12-07
+description = 'Different deployment methods'
++++
+
+In the link:{{< ref "niks-to-nix" >}}[first part] we set up NixOS on a VPS by manually booting from an ISO, partitioning the disk and running `nixos-install`.
+It works, but it is a lot of manual steps.
+In this article we will look at two ways to deploy NixOS more efficiently: building an SD image for a Raspberry Pi and remotely installing NixOS on a VPS.
+
+Both of my servers share a common `headless.nix` module that sets up SSH with key-only authentication, an admin user with doas, and disables sudo:
+
+[source,nix]
+----
+{ ... }: {
+    services.openssh = {
+        enable = true;
+        settings = {
+            PasswordAuthentication = false;
+            KbdInteractiveAuthentication = false;
+            PermitRootLogin = "no";
+        };
+    };
+    users.users.admin = {
+        isNormalUser = true;
+        initialPassword = "changeme";
+        extraGroups = [ "docker" ];
+        openssh.authorizedKeys.keys = [
+            "ssh-ed25519 AAAA..."
+        ];
+    };
+    security = {
+        sudo.enable = false;
+        doas = {
+            enable = true;
+            extraRules = [{
+                users = [ "admin" ];
+                keepEnv = true;
+                persist = true;
+                noPass = false;
+            }];
+        };
+    };
+}
+----
+
+This module gets imported by every server configuration, so we don't have to repeat ourselves.
+
+== Deploying to a Raspberry Pi
+
+The Raspberry Pi doesn't have a traditional BIOS or UEFI, it boots directly from an SD card.
+This means we can build a complete NixOS image on our local machine, flash it to an SD card, and plug it in.
+No manual installation required.
+
+=== The configuration
+
+My Raspberry Pi is called `ivy` and runs Home Assistant.
+The configuration is straightforward — it imports the shared `headless.nix` module and a Home Assistant module, and uses the extlinux bootloader which is typical for ARM boards:
+
+[source,nix]
+----
+{ config, ... }: {
+    imports = [
+        ../../modules/server/headless.nix
+        ../../modules/home-assistant.nix
+    ];
+    system.stateVersion = "24.11";
+    nix.settings = {
+        trusted-users = [ "admin" ];
+        experimental-features = [ "nix-command" "flakes" ];
+    };
+    boot.loader = {
+        grub.enable = false;
+        generic-extlinux-compatible.enable = true;
+    };
+    networking = {
+        hostName = "ivy";
+        networkmanager.enable = true;
+        firewall.enable = false;
+    };
+}
+----
+
+In the flake, `ivy` is defined separately from the other hosts because it targets `aarch64-linux` and uses the https://github.com/NixOS/nixos-hardware[nixos-hardware] module for the Raspberry Pi 3:
+
+[source,nix]
+----
+ivy = inputs.nixpkgs.lib.nixosSystem {
+    system = "aarch64-linux";
+    modules = [
+        inputs.nixos-hardware.nixosModules.raspberry-pi-3
+        ./nixos/ivy/configuration.nix
+    ];
+};
+----
+
+=== Building the SD image
+
+We use https://github.com/nix-community/nixos-generators[nixos-generators] to build an SD image from the flake.
+Since the Raspberry Pi uses an ARM processor, we need to cross-compile for `aarch64-linux`.
+
+[source,sh]
+----
+nix run nixpkgs#nixos-generators -- \
+    -f sd-aarch64 \
+    --flake ".#ivy" \
+    --system aarch64-linux \
+    -o "./ivy.sd"
+----
+
+This will take a while, especially on an x86 machine since it needs to cross-compile everything.
+The result is a compressed image in the output directory.
+
+I have this as a just recipe so I don't have to remember the flags:
+
+[source,just]
+----
+# Build SD image of a host
+build-sd host:
+    nix run nixpkgs#nixos-generators -- -f sd-aarch64 --flake ".#{{host}}" --system aarch64-linux -o "./{{host}}.sd"
+----
+
+=== Flashing the SD card
+
+After the build completes, we need to decompress the image and write it to the SD card.
+
+[source,sh]
+----
+cd ivy.sd/sd-image
+cp nixos-sd-image-*.img.zst ~/
+unzstd -d nixos-sd-image-*.img.zst -o nixos-sd-image.img
+----
+
+Then flash it to the SD card.
+Find your SD card device with `lsblk` (it will be something like `/dev/mmcblk0` or `/dev/sdb`).
+Make sure you pick the right device, `dd` will overwrite everything on it without asking.
+
+[source,sh]
+----
+sudo dd if=~/nixos-sd-image.img of=/dev/sdb bs=1M status=progress
+----
+
+=== Booting and connecting
+
+Insert the SD card into the Raspberry Pi and power it on.
+Since our `headless.nix` module has SSH enabled and our public keys configured, we can connect after it boots:
+
+[source,sh]
+----
+ssh admin@<ip-address>
+----
+
+The initial password is `changeme` (set in `headless.nix`), but since we have SSH key authentication configured, you shouldn't need it.
+Do make sure to change the password as is suggested, as it is used as the sudo/doas password.
+You can find the IP address from your router's DHCP lease table, or by using `nmap` to scan your local network.
+
+=== Updating remotely
+
+Once the Pi is running, you don't need to reflash the SD card every time you change the configuration.
+You can rebuild remotely using `nixos-rebuild` with the `--target-host` flag:
+
+[source,sh]
+----
+NIX_SSHOPTS="-o RequestTTY=force" nixos-rebuild switch \
+    --flake .#ivy \
+    --target-host admin@<ip-address> \
+    --use-remote-sudo
+----
+
+This works because we have `trusted-users = [ "admin" ]` in the ivy configuration.
+
+== Remote installation on a VPS
+
+For a VPS we use a different approach.
+Instead of flashing an image, we use https://github.com/nix-community/nixos-anywhere[nixos-anywhere] to install NixOS over SSH on a running system.
+This means you can take a fresh VPS running any Linux distribution and replace it with NixOS without needing console access or a custom ISO.
+
+=== Prerequisites
+
+The target server needs to be reachable over SSH with root access.
+Most VPS providers give you this out of the box when you deploy a new instance.
+
+Your flake needs a https://github.com/nix-community/disko[disko] configuration that describes how the disk should be partitioned.
+nixos-anywhere uses disko to declaratively partition and format the disk, so you don't have to do it manually.
+
+=== Disko configuration
+
+My server disko configuration lives in `disk/server.nix`.
+It creates a GPT disk with a BIOS boot partition, an EFI system partition, and the rest as an LVM volume group with a single ext4 root partition:
+
+[source,nix]
+----
+{ lib, ... }:
+{
+  disko.devices = {
+    disk.main = {
+      device = lib.mkDefault "/dev/sda";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          boot = {
+            name = "boot";
+            size = "1M";
+            type = "EF02";
+          };
+          esp = {
+            name = "ESP";
+            size = "500M";
+            type = "EF00";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
+            };
+          };
+          root = {
+            name = "root";
+            size = "100%";
+            content = {
+              type = "lvm_pv";
+              vg = "pool";
+            };
+          };
+        };
+      };
+    };
+    lvm_vg = {
+      pool = {
+        type = "lvm_vg";
+        lvs = {
+          root = {
+            size = "100%FREE";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              mountpoint = "/";
+              mountOptions = [ "defaults" ];
+            };
+          };
+        };
+      };
+    };
+  };
+}
+----
+
+The disk device defaults to `/dev/sda` with `lib.mkDefault`, so it can be overridden per host if needed.
+Both a BIOS boot partition (`EF02`) and an EFI system partition (`EF00`) are included, which makes this configuration work on both BIOS and UEFI systems.
+
+=== Host configuration
+
+My VPS is called `hemlock`.
+Its configuration imports the shared `headless.nix`, the `server.nix` disko config, and the service modules it needs:
+
+[source,nix]
+----
+{ pkgs, ... }: {
+    imports = [
+        ../../disk/server.nix
+        ../../modules/server/headless.nix
+        ../../modules/server/caddy.nix
+        ../../modules/server/radicale.nix
+        ../../modules/server/immich.nix
+    ];
+    boot.loader.grub = {
+        enable = true;
+        devices = [];
+        efiSupport = true;
+        efiInstallAsRemovable = true;
+    };
+    nix.settings = {
+        trusted-users = [ "admin" ];
+        experimental-features = [ "nix-command" "flakes" ];
+    };
+    networking.firewall = {
+        enable = true;
+        allowedTCPPorts = [ 22 80 443 ];
+    };
+    # ...
+}
+----
+
+=== Running the installation
+
+With everything in place, a single command installs NixOS on the remote server:
+
+[source,sh]
+----
+nix run github:nix-community/nixos-anywhere -- \
+    --flake ./#hemlock \
+    --target-host root@<ip-address> \
+    --generate-hardware-config nixos-generate-config ./nixos/hemlock/hardware-configuration.nix
+----
+
+The `--generate-hardware-config` flag tells nixos-anywhere to generate the hardware configuration on the target machine and copy it back to your local flake.
+This way you get the correct hardware settings without having to SSH in and copy files manually.
+
+Again, I have a just recipe for this:
+
+[source,just]
+----
+# Remotely install a flake
+remote-install flake conn_str:
+    nix run github:nix-community/nixos-anywhere -- --flake ./#{{flake}} --target-host {{conn_str}} --generate-hardware-config nixos-generate-config ./nixos/{{flake}}/hardware-configuration.nix
+----
+
+nixos-anywhere will:
+
+. Boot the target into a temporary installer environment (kexec)
+. Partition and format the disk using the disko configuration
+. Install NixOS with the flake configuration
+. Reboot into the freshly installed system
+
+The whole process takes a few minutes and requires no manual intervention.
+After it finishes, you can SSH into the server with the admin user and keys defined in `headless.nix`.
+
