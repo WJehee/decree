@@ -31,7 +31,7 @@
     }
 
     h1 {
-        @apply text-8xl font-bold;
+        @apply text-6xl font-bold;
     }
 
     h2 {

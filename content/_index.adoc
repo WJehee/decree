@@ -1,0 +1,6 @@
++++
+title = "Home"
++++
+
+Based somewhere in the Netherlands +
+I hack (both the *making* and [.line-through]#breaking# kind) on things in strange environments.

@@ -1,14 +1,48 @@
 {{ define "main" }}
 
-<section id="hero" class="mb-128">
-    <div class="container mx-auto grid grid-cols-4">
-        <div class="col-span-3">
-            <hgroup>
-                <h1>Wouter Jehee</h1>
-                <h2>Security Engineer</h2>
-            </hgroup>
+<section id="hero" class="mb-24 md:mb-32">
+    <div class="container mx-auto px-6">
+        <div class="max-w-2xl">
+            <h1 class="mb-6">Security Engineer</h1>
+            <div class="prose text-lg leading-relaxed">
+                {{ .Content }}
+            </div>
         </div>
     </div>
 </section>
+
+{{ $posts := (where site.RegularPages "Section" "posts").ByDate.Reverse }}
+{{ with first 3 $posts }}
+<section id="recent-writing">
+    <div class="container mx-auto px-6">
+        <h2 class="text-2xl font-bold text-stone-900 dark:text-zinc-100 mb-6">Recent writing</h2>
+        <div class="space-y-4">
+            {{ range . }}
+                <article class="group border-b border-stone-200 dark:border-zinc-800 pb-4">
+                    <a href="{{ .RelPermalink }}" class="flex items-baseline gap-4">
+                        <h3 class="font-bold text-lg text-stone-900 dark:text-zinc-100 group-hover:text-stone-600 dark:group-hover:text-zinc-400 transition-colors truncate min-w-0">
+                            {{ .Title }}
+                        </h3>
+                        {{ with .Description }}
+                            <span class="hidden lg:inline text-stone-400 dark:text-zinc-600 shrink-0">&mdash;</span>
+                            <p class="hidden lg:block text-stone-600 dark:text-zinc-400 group-hover:text-stone-500 dark:group-hover:text-zinc-500 transition-colors text-lg truncate min-w-0">
+                                {{ . }}
+                            </p>
+                        {{ end }}
+                        {{ with .Date }}
+                            <time class="text-base text-stone-500 dark:text-zinc-500 group-hover:text-stone-400 dark:group-hover:text-zinc-600 transition-colors shrink-0 ml-auto" datetime="{{ .Format "2006-01-02" }}">
+                                {{ .Format "January 2, 2006" }}
+                            </time>
+                        {{ end }}
+                    </a>
+                </article>
+            {{ end }}
+        </div>
+        <a href="/posts/" class="inline-block mt-6 text-base text-stone-500 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-zinc-100 transition-colors">
+            All posts &rarr;
+        </a>
+    </div>
+</section>
+{{ end }}
 
 {{ end }}

@@ -1,10 +1,15 @@
-== Personal Website
+= Personal Website
 
 Wouter Jehee's personal website.
 
-=== Built using
+== Built using
 
 - https://gohugo.io[Hugo]
-- https://tailwindcss.com/[TailwindCSS]
+- https://tailwindcss.com/[TailwindCSS v4]
 - https://asciidoc.org/[AsciiDoc]
+
+== Design
+
+- Light theme font: Baskerville
+- Dark theme font: Satoshi
 
