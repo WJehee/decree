@@ -1,0 +1,6 @@
++++
+title = 'Niks to Nix | Part 3'
+date = 2026-02-13T15:05:01+01:00
+description = 'Managing secrets and setting up Authentik'
+draft = true
++++

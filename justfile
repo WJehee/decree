@@ -8,5 +8,5 @@ build:
 
 # Start dev server
 serve:
-    hugo server
+    hugo server -D
 
