@@ -1,10 +1,11 @@
 +++
-title = 'Niks to Nix | Part 2'
+title = 'Niks to Nix | Deployment'
 date = 2025-12-07
 description = 'Different deployment methods'
+tags = ['self-hosting', 'nix']
 +++
 
-In the link:{{< ref "niks-to-nix" >}}[first part] we set up NixOS on a VPS by manually booting from an ISO, partitioning the disk and running `nixos-install`.
+In a link:{{< ref "niks-to-nix" >}}[previous article] we set up NixOS on a VPS by manually booting from an ISO, partitioning the disk and running `nixos-install`.
 It works, but it is a lot of manual steps.
 In this article we will look at two ways to deploy NixOS more efficiently: building an SD image for a Raspberry Pi and remotely installing NixOS on a VPS.
 

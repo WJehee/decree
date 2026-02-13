@@ -8,6 +8,15 @@
                 {{ .Format "January 2, 2006" }}
             </time>
         {{ end }}
+        {{ with .GetTerms "tags" }}
+            <div class="mt-3 flex gap-3 flex-wrap">
+                {{ range . }}
+                    <a href="{{ .RelPermalink }}" class="text-sm px-2 py-0.5 rounded bg-stone-200 dark:bg-zinc-800 text-stone-600 dark:text-zinc-400 hover:text-stone-900 dark:hover:text-zinc-200 transition-colors">
+                        {{ .LinkTitle | title }}
+                    </a>
+                {{ end }}
+            </div>
+        {{ end }}
     </header>
 
     <div class="prose dark:prose-invert max-w-none">

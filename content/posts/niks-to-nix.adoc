@@ -1,7 +1,8 @@
 +++
-title = "Niks to Nix | Part 1"
+title = "Niks to Nix | Installing NixOS"
 date = 2023-09-29
 description = "Installing NixOS on a VPS"
+tags = ["self-hosting", "nix"]
 +++
 :experimental:
 
