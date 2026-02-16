@@ -256,7 +256,7 @@ With this snippet defined, protecting a service is as simple as adding `import a
 }
 ----
 
-The Authelia portal itself at `auth.example.com` is a plain reverse proxy without the forward auth snippet — it is the authentication endpoint, so it doesn't need to protect itself.
+The Authelia portal itself at `auth.example.com` is a plain reverse proxy without the forward auth snippet it is the authentication endpoint, so it doesn't need to protect itself.
 Services that need authentication, like the LLDAP web interface and the test site, import the snippet inside a `route` block.
 Services that don't need authentication, like the main website and the calendar, are just regular reverse proxies or file servers.
 
