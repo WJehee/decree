@@ -76,11 +76,16 @@
         @apply list-disc pl-6 mb-4 space-y-1;
     }
 
+    .prose ul ul {
+        @apply list-[circle] pl-4 mt-1 mb-0 space-y-0.5;
+    }
+
     .prose li {
         @apply text-lg;
     }
 
-    .prose li > p:only-child {
+    .prose li > p:only-child,
+    .prose li > p:first-child:not(:only-child) {
         @apply mb-0;
     }
 
