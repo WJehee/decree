@@ -7,13 +7,31 @@
     let
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
+        # Hugo >= 0.161 only accepts tailwindcss as a Node.js script and runs
+        # it via node itself, so the native nixpkgs binary needs a Node shim
+        tailwindcss-shim = pkgs.writeTextFile {
+            name = "tailwindcss-node-shim";
+            destination = "/bin/tailwindcss";
+            executable = true;
+            text = ''
+                #!${pkgs.nodejs}/bin/node
+                const { spawnSync } = require("node:child_process");
+                const result = spawnSync(
+                    "${pkgs.tailwindcss_4}/bin/tailwindcss",
+                    process.argv.slice(2),
+                    { stdio: "inherit" },
+                );
+                process.exit(result.status === null ? 1 : result.status);
+            '';
+        };
         website = with pkgs; stdenv.mkDerivation {
             pname = "wouterjehee.com";
             version = "1.0.0";
             src = ./.;
             nativeBuildInputs = [
                 hugo
-                tailwindcss_4
+                tailwindcss-shim
+                nodejs
                 asciidoctor-quiet
                 git
             ];
@@ -32,7 +50,8 @@
         devShells.${system}.default = with pkgs; mkShell {
             buildInputs = [
                 hugo
-                tailwindcss_4
+                tailwindcss-shim
+                nodejs
                 asciidoctor-quiet
             ];
         };

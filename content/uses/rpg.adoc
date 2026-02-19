@@ -21,11 +21,16 @@ weight = 2
 * Mothership
 * The Book of Gaub
 * Dolmenwood
+    ** Campaign book
+    ** Player book
+    ** Monster book
     ** The Ruined Abbey of St Clewyd
     ** Winter's Daughter
     ** Emelda's Song
     ** The Fungus That Came to Blackeswell
 * The Midderlands
+* Vermis I, II and III
+* Heart: The City Beneath
 --
 
 [.column]
@@ -36,6 +41,12 @@ weight = 2
 * Leuchtturm 1917 notebooks
 * Coins and pouches by https://drawlab.com/[Drawlab]
 * Sound effects through https://moodist.mvze.net/[Moodist]
+
+[discrete]
+=== Rules
+
+**Coming soon**
+
 --
 ****
 

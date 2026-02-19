@@ -30,7 +30,7 @@ I use https://arcticons.com/[Arcticons] + https://f-droid.org/packages/com.kaane
 [discrete]
 === Other
 
-* https://secrid.com/[Secrid] wallet
+* https://bellroy.com/products/slim-sleeve-wallet?color=black&material=leather&size=default#slide-0[Bellroy Slim Sleeve] wallet in black
 * https://eu.leatherman.com/[Leatherman] Skeletool
 --
 ****

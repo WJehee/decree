@@ -9,7 +9,7 @@
         </div>
         <script>
             (function() {
-                const quotes = {{ site.Data.quotes | jsonify | safeJS }};
+                const quotes = {{ hugo.Data.quotes | jsonify | safeJS }};
                 const el = document.getElementById("nav-quote");
                 let idx = parseInt(sessionStorage.getItem("nav-quote-idx"), 10);
                 if (isNaN(idx) || idx < 0 || idx >= quotes.length) {
