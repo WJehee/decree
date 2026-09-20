@@ -15,9 +15,9 @@ All my computer run NixOS, https://github.com/wjehee/.garland[my configuration] 
 In addition, I use https://github.com/danth/stylix[Stylix] for theming my setup.
 
 * https://neovim.io/[Neovim] as my editor.
-* https://hypr.land/[Hyprland] as my window manager.
-* https://github.com/Alexays/Waybar[Waybar] as my status bar.
+* https://hypr.land/[Hyprland] as my window manager and https://noctalia.dev/[Noctalia] for making it look nice.
 * https://github.com/alacritty/alacritty[Alacritty] as my terminal emulator.
+* https://librewolf.net/[Librewolf] as my browser.
 
 *Development* +
 I use git with https://github.com/jj-vcs/jj[jj (jujutsu)] for version control. +
